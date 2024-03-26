@@ -1,0 +1,64 @@
+﻿using ContactDataAccess.Context;
+using ContactDataAccess.Models;
+
+namespace ContactDataAccess.Repository
+{
+    public class ContactsRepository
+    {
+        private readonly ContactsDbContext _context;
+        
+        public ContactsRepository()
+        {
+            _context = new ContactsDbContext();
+        }
+
+        public async Task<ContactsModel> CreateAsync(ContactsModel model)
+        {
+            await _context.Entities.AddAsync(model);
+            await _context.SaveChangesAsync();
+
+            return model;
+        }
+
+        public async Task<ContactsModel> DeleteAsync(int Id)
+        {
+            var model = _context.Entities.Find(Id);
+
+            _context.Entities.Remove(model);
+            await _context.SaveChangesAsync();
+
+            return model;
+        }
+
+        public async Task<ContactsModel> UpdateAsync(ContactsModel model)
+        {
+            var existingContact = _context.Entities.Find(model.ID);
+
+            if (existingContact != null)
+            {
+                existingContact.FirstName = model.FirstName;
+                existingContact.LastName = model.LastName;
+                existingContact.Email = model.Email;
+                existingContact.PhoneNumber = model.PhoneNumber;
+
+                await _context.SaveChangesAsync();
+            }
+
+            return model;
+        }
+
+        public async Task<ContactsModel> GetByIdAsync(int Id)
+        {
+            var contact = _context.Entities.Find(Id);
+
+            return contact;
+        }
+
+        public async Task<List<ContactsModel>> GetAllAsync()
+        {
+            List<ContactsModel> result = _context.Entities.ToList();
+
+            return result;
+        }
+    }
+}
