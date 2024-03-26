@@ -22,7 +22,7 @@ namespace ContactDataAccess.Context
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer();
+                optionsBuilder.UseSqlServer("Server=WILSON\\SQLEXPRESS;Database=Contacts;Trusted_Connection=True;TrustServerCertificate=True;");
             }
         }
 
