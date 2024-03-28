@@ -20,14 +20,18 @@ namespace ContactDataAccess.Repository
             return model;
         }
 
-        public async Task<ContactsModel> DeleteAsync(int Id)
+        public async Task<bool> DeleteAsync(ContactsModel isDeleted)
         {
-            var model = _context.Entities.Find(Id);
+            var existingContact = _context.Entities.Find(isDeleted.ID);
 
-            _context.Entities.Remove(model);
+            if (existingContact is not null)
+            {
+                existingContact.IsDelete = true;
+            }
+
             await _context.SaveChangesAsync();
 
-            return model;
+            return true;
         }
 
         public async Task<ContactsModel> UpdateAsync(ContactsModel model)
@@ -40,11 +44,19 @@ namespace ContactDataAccess.Repository
                 existingContact.LastName = model.LastName;
                 existingContact.Email = model.Email;
                 existingContact.PhoneNumber = model.PhoneNumber;
+                existingContact.IsDelete = model.IsDelete;
 
                 await _context.SaveChangesAsync();
             }
 
             return model;
+        }
+
+        public async Task<IQueryable<ContactsModel>> IsDeleted(bool isDeleted)
+        {
+            var deletedContact = _context.Entities.Where(a => a.IsDelete == isDeleted);
+
+            return deletedContact;
         }
 
         public async Task<ContactsModel> GetByIdAsync(int Id)

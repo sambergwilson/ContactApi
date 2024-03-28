@@ -38,6 +38,7 @@ namespace ContactDataAccess.Context
                     entity.Property(e => e.LastName);
                     entity.Property(e => e.Email);
                     entity.Property(e => e.PhoneNumber);
+                    entity.Property(e => e.IsDelete);
                 });
         }
     }

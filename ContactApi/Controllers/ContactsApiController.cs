@@ -25,7 +25,8 @@ namespace ContactApi.Controllers
                 FirstName = model.FirstName,
                 LastName = model.LastName, 
                 Email = model.Email,
-                PhoneNumber = model.PhoneNumber
+                PhoneNumber = model.PhoneNumber,
+                IsDelete = model.IsDelete
             };
 
             var result = await _repo.CreateAsync(created);
@@ -35,16 +36,22 @@ namespace ContactApi.Controllers
                 FirstName = result.FirstName,
                 LastName = result.LastName, 
                 Email = result.Email,
-                PhoneNumber = result.PhoneNumber
+                PhoneNumber = result.PhoneNumber, 
+                IsDelete = result.IsDelete
             };
 
             return Ok(viewModel);
         }
 
-        [HttpDelete("{Id}")]
+        [HttpDelete("{Id:int}")]
         public async Task<IActionResult> DeleteEventAsync(int Id)
         {
-            await _repo.DeleteAsync(Id);
+            var toArchive = new ContactsModel
+            {
+                ID = Id,
+            };
+
+            await _repo.DeleteAsync(toArchive);
 
             return Ok();
         }
@@ -52,7 +59,7 @@ namespace ContactApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllContacts()
         {
-            var result = await _repo.GetAllAsync();
+            var result = await _repo.IsDeleted(false);
 
             return Ok(result);
         }
